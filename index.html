@@ -10,7 +10,6 @@
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 480px; padding: 30px 20px; box-sizing: border-box; text-align: center; }
         
-        .profile-img { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--gold); margin-top: 10px; object-fit: cover; }
         h1 { font-size: 22px; margin: 15px 0 5px; }
         p.sub { color: var(--muted); font-size: 14px; margin-bottom: 25px; }
         
@@ -39,7 +38,6 @@
         <div id="error-msg" style="display:none; color: #ff6b6b; margin-top:50px; font-weight:bold; padding: 20px; line-height: 1.5;"></div>
 
         <div id="content">
-            <img id="logo-img" src="" alt="Logo" class="profile-img">
             <h1 id="shop-name"></h1>
             <p class="sub" id="shop-sub"></p>
 
@@ -80,7 +78,6 @@
                 sheetId = sheetId.split('/d/')[1].split('/')[0];
             }
 
-            // ÖNEMLİ: Linkin sonundaki t=... kısmı Google'ın eski veriyi (cache) getirmesini engeller!
             const fetchUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&t=${new Date().getTime()}`;
             
             try {
@@ -94,14 +91,14 @@
                 }
 
                 const rows = csvText.split(/\r?\n/).filter(r => r.trim() !== '');
-                const headers = rows[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/^"\vert{}"$/g, '').trim());
+                const headers = rows[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/"/g, '').trim());
                 
                 let found = false;
                 let availableIds = [];
 
                 for (let i = 1; i < rows.length; i++) {
-                    const cols = rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/^"\vert{}"$/g, '').trim());
-                    const currentId = cols[0]; // ID her zaman ilk sütundadır
+                    const cols = rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/"/g, '').trim());
+                    const currentId = cols[0]; 
                     
                     if (currentId) availableIds.push(currentId);
 
@@ -115,13 +112,13 @@
 
                         document.getElementById('shop-name').innerText = getVal('Dukkan_Adi') || cols[1];
                         document.getElementById('shop-sub').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${getVal('Konum') || cols[2]}`;
-                        document.getElementById('logo-img').src = `https://ui-avatars.com/api/?name=${getVal('Logo_Harfleri') || cols[3]}&background=d4af37&color=000&size=150`;
-                        document.getElementById('owner-name').innerText = getVal('Hesap_Sahibi') || cols[4];
-                        document.getElementById('iban-no').innerText = getVal('IBAN') || cols[5];
+                        
+                        document.getElementById('owner-name').innerText = getVal('Hesap_Sahibi') || cols[3];
+                        document.getElementById('iban-no').innerText = getVal('IBAN') || cols[4];
 
-                        const gl = getVal('Google_Link') || cols[6];
-                        const ig = getVal('Insta_Link') || cols[7];
-                        const wp = getVal('WP_No') || cols[8];
+                        const gl = getVal('Google_Link') || cols[5];
+                        const ig = getVal('Insta_Link') || cols[6];
+                        const wp = getVal('WP_No') || cols[7];
 
                         if(gl) { document.getElementById('link-g').href = gl; document.getElementById('link-g').style.display = 'flex'; }
                         if(ig) { document.getElementById('link-i').href = `https://instagram.com/${ig}`; document.getElementById('link-i').style.display = 'flex'; }
@@ -134,7 +131,6 @@
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('content').style.display = 'block';
                 } else {
-                    // Eğer bulamazsa tablodaki hangi ID'leri okuduğunu ekrana basar (Hata ayıklamak için)
                     showError(`Kayıt Bulunamadı!<br><br>Aranan ID: <b>${musteriID}</b><br>Tabloda Bulunan ID'ler: <b>${availableIds.join(', ')}</b>`);
                 }
 
