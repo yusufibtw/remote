@@ -36,7 +36,7 @@
 
     <div class="container">
         <div id="loading" class="loader"></div>
-        <div id="error-msg" style="display:none; color: #ff6b6b; margin-top:50px; font-weight:bold; padding: 20px;"></div>
+        <div id="error-msg" style="display:none; color: #ff6b6b; margin-top:50px; font-weight:bold; padding: 20px; line-height: 1.5;"></div>
 
         <div id="content">
             <img id="logo-img" src="" alt="Logo" class="profile-img">
@@ -65,64 +65,63 @@
     </div>
 
     <script>
-        // Senin Excel Tablonun Bağlantısı
         const SHEET_URL = '1vUGlkYvgoTbdJX0OmvMFH4Xwicowq8WfmD5U6LMvghs';
-
-        // Linkten ID'yi okur (Örn: ?id=berber)
         const urlParams = new URLSearchParams(window.location.search);
         const musteriID = urlParams.get('id');
 
         async function fetchVeri() {
             if (!musteriID) {
-                showError("Geçersiz link. Lütfen linkin sonuna ?id=berber gibi bir ek yapın.");
+                showError("Lütfen linkin sonuna ?id=berber gibi bir ek yapın.");
                 return;
             }
 
-            // Tam link girilse bile içinden sadece ID'yi ayıklar
             let sheetId = SHEET_URL;
             if (sheetId.includes('/d/')) {
                 sheetId = sheetId.split('/d/')[1].split('/')[0];
             }
 
-            const fetchUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+            // ÖNEMLİ: Linkin sonundaki t=... kısmı Google'ın eski veriyi (cache) getirmesini engeller!
+            const fetchUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&t=${new Date().getTime()}`;
             
             try {
                 const response = await fetch(fetchUrl);
                 if (!response.ok) throw new Error("Sunucu hatası");
                 const csvText = await response.text();
                 
-                // Hata HTML sayfası döndüyse uyar
                 if (csvText.trim().startsWith('<!DOCTYPE html>')) {
-                    showError("Excel tablosuna ulaşılamıyor. Tablonun 'Bağlantıya sahip herkes' olarak paylaşıldığından emin olun.");
+                    showError("Excel tablosuna ulaşılamıyor. Paylaşım ayarlarını kontrol edin.");
                     return;
                 }
 
-                // Satırları ayır
                 const rows = csvText.split(/\r?\n/).filter(r => r.trim() !== '');
-                
-                // Başlıkları otomatik oku (Sütunlar karışsa bile sorun çıkmaz)
                 const headers = rows[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/^"\vert{}"$/g, '').trim());
+                
                 let found = false;
+                let availableIds = [];
 
-                // Müşterileri tara
                 for (let i = 1; i < rows.length; i++) {
                     const cols = rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/^"\vert{}"$/g, '').trim());
+                    const currentId = cols[0]; // ID her zaman ilk sütundadır
                     
-                    const currentId = cols[headers.indexOf('Musteri_ID')] || cols[0];
+                    if (currentId) availableIds.push(currentId);
+
                     if (currentId && currentId.toLowerCase() === musteriID.toLowerCase()) {
                         found = true;
                         
-                        const getVal = (name) => cols[headers.indexOf(name)] || '';
+                        const getVal = (name) => {
+                            const index = headers.indexOf(name);
+                            return index !== -1 ? cols[index] : '';
+                        };
 
-                        document.getElementById('shop-name').innerText = getVal('Dukkan_Adi');
-                        document.getElementById('shop-sub').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${getVal('Konum')}`;
-                        document.getElementById('logo-img').src = `https://ui-avatars.com/api/?name=${getVal('Logo_Harfleri')}&background=d4af37&color=000&size=150`;
-                        document.getElementById('owner-name').innerText = getVal('Hesap_Sahibi');
-                        document.getElementById('iban-no').innerText = getVal('IBAN');
+                        document.getElementById('shop-name').innerText = getVal('Dukkan_Adi') || cols[1];
+                        document.getElementById('shop-sub').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${getVal('Konum') || cols[2]}`;
+                        document.getElementById('logo-img').src = `https://ui-avatars.com/api/?name=${getVal('Logo_Harfleri') || cols[3]}&background=d4af37&color=000&size=150`;
+                        document.getElementById('owner-name').innerText = getVal('Hesap_Sahibi') || cols[4];
+                        document.getElementById('iban-no').innerText = getVal('IBAN') || cols[5];
 
-                        const gl = getVal('Google_Link');
-                        const ig = getVal('Insta_Link');
-                        const wp = getVal('WP_No');
+                        const gl = getVal('Google_Link') || cols[6];
+                        const ig = getVal('Insta_Link') || cols[7];
+                        const wp = getVal('WP_No') || cols[8];
 
                         if(gl) { document.getElementById('link-g').href = gl; document.getElementById('link-g').style.display = 'flex'; }
                         if(ig) { document.getElementById('link-i').href = `https://instagram.com/${ig}`; document.getElementById('link-i').style.display = 'flex'; }
@@ -135,7 +134,8 @@
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('content').style.display = 'block';
                 } else {
-                    showError("Bu dükkana (" + musteriID + ") ait kayıt Excel tablosunda bulunamadı! Harf hatası veya boşluk olmadığından emin olun.");
+                    // Eğer bulamazsa tablodaki hangi ID'leri okuduğunu ekrana basar (Hata ayıklamak için)
+                    showError(`Kayıt Bulunamadı!<br><br>Aranan ID: <b>${musteriID}</b><br>Tabloda Bulunan ID'ler: <b>${availableIds.join(', ')}</b>`);
                 }
 
             } catch (error) {
@@ -146,7 +146,7 @@
         function showError(msg) {
             document.getElementById('loading').style.display = 'none';
             const errDiv = document.getElementById('error-msg');
-            errDiv.innerText = msg;
+            errDiv.innerHTML = msg;
             errDiv.style.display = 'block';
         }
 
