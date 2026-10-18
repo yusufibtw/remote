@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijital Kartvizit</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --bg: #121212; --card: #1e1e1e; --gold: #d4af37; --text: #fff; --muted: #a0a0a0; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; padding-bottom: 20px;}
+        .container { width: 100%; max-width: 480px; padding: 40px 20px 20px; box-sizing: border-box; text-align: center; }
+
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 50px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #content { display: none; }
+
+        /* İsim ve Unvan */
+        h1 { font-size: 28px; margin: 0 0 5px; letter-spacing: 0.5px;}
+        p.title { color: var(--muted); font-size: 15px; margin-top: 0; margin-bottom: 40px; font-weight: 500;}
+
+        /* Ana Eylem Butonları */
+        .btn-action { text-decoration: none; border: none; padding: 18px; width: 100%; border-radius: 12px; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; transition: transform 0.2s; box-sizing: border-box;}
+        .btn-action:active { transform: scale(0.98); }
+        
+        .btn-call { background: var(--gold); color: black; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);}
+        .btn-call i { color: black; font-size: 18px; margin: 0 10px;}
+        
+        .btn-save { background: var(--gold); color: black; margin-bottom: 40px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25); gap: 12px;}
+        .btn-save i { font-size: 20px; color: black; }
+
+        /* İletişim Izgarası */
+        .grid-links { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 40px; }
+        .grid-btn { background: var(--card); border: 1px solid #333; color: var(--text); text-decoration: none; padding: 20px 15px; border-radius: 12px; font-size: 16px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.2);}
+        .grid-btn i { font-size: 32px; }
+        
+        .i-wp { color: #25D366; }
+        .i-ig { background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Footer */
+        .footer { margin-top: 20px; text-align: center; font-size: 13px; color: var(--muted); line-height: 1.8; padding-top: 25px; border-top: 1px solid #333;}
+        .footer a { color: var(--gold); text-decoration: none; font-weight: bold; letter-spacing: 0.5px;}
+        .footer-cta { display: block; font-size: 14px; margin-bottom: 5px; }
+        .footer-brand { font-size: 11px; opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="loading" class="loader"></div>
+        <div id="error-msg" style="display:none; color: #ff6b6b; margin-top:50px; font-weight:bold; padding: 20px; line-height: 1.5;"></div>
+
+        <div id="content">
+            
+            <h1 id="v-name"></h1>
+            <p class="title" id="v-title"></p>
+
+            <a id="btn-call" href="#" class="btn-action btn-call">
+                Ara <i class="fas fa-phone-alt"></i> <span id="call-text"></span>
+            </a>
+
+            <button class="btn-action btn-save" onclick="downloadVCard()">
+                <i class="fas fa-user-plus"></i> Rehbere Ekle
+            </button>
+
+            <div class="grid-links">
+                <a id="link-wp" href="#" target="_blank" class="grid-btn" style="display:none;">
+                    <i class="fab fa-whatsapp i-wp"></i> WhatsApp
+                </a>
+                <a id="link-ig" href="#" target="_blank" class="grid-btn" style="display:none;">
+                    <i class="fab fa-instagram i-ig"></i> Instagram
+                </a>
+            </div>
+
+            <div class="footer">
+                <a href="https://wa.me/905525714538?text=Merhaba,%20dijital%20kartvizit%20sistemiyle%20ilgileniyorum." target="_blank" class="footer-cta">Bu dijital kartvizitten yaptırmak için tıklayın</a>
+                <div class="footer-brand">
+                    Powered by <a href="https://wa.me/905525714538?text=Merhaba,%20dijital%20kartvizit%20sistemiyle%20ilgileniyorum." target="_blank">yusufibtw</a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // BURAYA KENDİ KİŞİSEL KARTLAR TABLONUN LİNKİNİ VEYA ID'SİNİ YAPIŞTIR
+        const SHEET_URL = 'BURAYA_YENI_TABLO_ID_GELECEK'; 
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const musteriID = urlParams.get('id');
+
+        let vcardData = { name: '', title: '', phone: '' };
+
+        async function fetchVeri() {
+            if (!musteriID) {
+                showError("Lütfen linkin sonuna ?id=yusuf gibi bir ek yapın.");
+                return;
+            }
+
+            let sheetId = SHEET_URL;
+            if (sheetId.includes('/d/')) {
+                sheetId = sheetId.split('/d/')[1].split('/')[0];
+            }
+
+            const fetchUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&t=${new Date().getTime()}`;
+            
+            try {
+                const response = await fetch(fetchUrl);
+                if (!response.ok) throw new Error("Sunucu hatası");
+                const csvText = await response.text();
+                
+                if (csvText.trim().startsWith('<!DOCTYPE html>')) {
+                    showError("Excel tablosuna ulaşılamıyor. Paylaşım ayarlarını kontrol edin.");
+                    return;
+                }
+
+                const rows = csvText.split(/\r?\n/).filter(r => r.trim() !== '');
+                const headers = rows[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/"/g, '').trim());
+                
+                let found = false;
+
+                for (let i = 1; i < rows.length; i++) {
+                    const cols = rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/"/g, '').trim());
+                    const currentId = cols[0]; 
+
+                    if (currentId && currentId.toLowerCase() === musteriID.toLowerCase()) {
+                        found = true;
+                        
+                        const getVal = (name) => {
+                            const index = headers.indexOf(name);
+                            return index !== -1 ? cols[index] : '';
+                        };
+
+                        const fullName = getVal('Ad_Soyad') || cols[1];
+                        const title = getVal('Unvan') || cols[2];
+                        const phoneDisplay = getVal('Telefon_Gosterim') || cols[3];
+                        const phoneLink = getVal('Telefon_Link') || cols[4];
+                        const ig = getVal('Instagram') || cols[5];
+
+                        // Ekrana Yazdırma
+                        document.getElementById('v-name').innerText = fullName;
+                        document.getElementById('v-title').innerText = title;
+                        document.getElementById('call-text').innerText = phoneDisplay;
+                        
+                        // Linkleri Ayarlama
+                        document.getElementById('btn-call').href = `tel:+${phoneLink}`;
+
+                        if(phoneLink) { 
+                            document.getElementById('link-wp').href = `https://wa.me/${phoneLink}`; 
+                            document.getElementById('link-wp').style.display = 'flex'; 
+                        }
+                        if(ig) { 
+                            document.getElementById('link-ig').href = `https://instagram.com/${ig}`; 
+                            document.getElementById('link-ig').style.display = 'flex'; 
+                        }
+
+                        // VCF (Rehbere Ekle) için veriyi hafızaya al
+                        vcardData.name = fullName;
+                        vcardData.title = title;
+                        vcardData.phone = `+${phoneLink}`;
+                        
+                        break;
+                    }
+                }
+
+                if (found) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('content').style.display = 'block';
+                } else {
+                    showError(`Kayıt Bulunamadı! ID: <b>${musteriID}</b>`);
+                }
+
+            } catch (error) {
+                showError("Veri çekilemedi. İnternetinizi kontrol edin.");
+            }
+        }
+
+        function showError(msg) {
+            document.getElementById('loading').style.display = 'none';
+            const errDiv = document.getElementById('error-msg');
+            errDiv.innerHTML = msg;
+            errDiv.style.display = 'block';
+        }
+
+        // Dinamik VCF Oluşturucu ve İndirici
+        function downloadVCard() {
+            if(!vcardData.name) return;
+            
+            let vcard = "BEGIN:VCARD\nVERSION:3.0\n";
+            vcard += "FN;CHARSET=UTF-8:" + vcardData.name + "\n";
+            vcard += "TITLE;CHARSET=UTF-8:" + vcardData.title + "\n";
+            vcard += "TEL;TYPE=CELL:" + vcardData.phone + "\n";
+            vcard += "END:VCARD";
+            
+            let blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
+            let url = URL.createObjectURL(blob);
+            
+            let a = document.createElement("a");
+            a.style.display = "none";
+            a.href = url;
+            a.download = vcardData.name.replace(/\s+/g, '_') + "_Kartvizit.vcf";
+            document.body.appendChild(a);
+            a.click();
+            
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchVeri);
+    </script>
+</body>
+</html>
