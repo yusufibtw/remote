@@ -7,14 +7,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root { --bg: #121212; --card: #1e1e1e; --gold: #d4af37; --text: #fff; --muted: #a0a0a0; --google-blue: #4285F4; }
-        /* Arkaplan geçişleri için body'e transition eklendi */
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; transition: background 0.5s ease; }
         .container { width: 100%; max-width: 480px; padding: 30px 20px; box-sizing: border-box; text-align: center; position: relative; z-index: 1; }
         
         h1 { font-size: 22px; margin: 15px 0 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         p.sub { color: var(--muted); font-size: 14px; margin-bottom: 25px; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
         
-        /* Kartlara hafif saydamlık (cam efekti) eklendi ki arkaplan hafif belli olsun */
         .card { background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(5px); padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
         .card h2 { color: var(--gold); font-size: 14px; margin-top: 0; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;}
         .label { font-size: 12px; color: var(--muted); margin-bottom: 5px; }
@@ -145,11 +143,10 @@
                         const mail = getVal('Mail_Adresi') || cols[8];
                         const web = getVal('Web_Sitesi') || cols[9];
                         
-                        // YENİ: ARKAPLAN RESMİ
+                        // YENİ: ARKAPLAN RESMİ (Karartma oranı 0.3 - 0.5 olarak azaltıldı)
                         const bgImage = getVal('Arkaplan_Resmi') || cols[10];
                         if (bgImage) {
-                            // Resmi eklerken üstüne okumayı kolaylaştıran siyahımsı bir gradient (karartma) atıyoruz
-                            document.body.style.backgroundImage = `linear-gradient(rgba(18, 18, 18, 0.75), rgba(18, 18, 18, 0.90)), url('${bgImage}')`;
+                            document.body.style.backgroundImage = `linear-gradient(rgba(18, 18, 18, 0.3), rgba(18, 18, 18, 0.5)), url('${bgImage}')`;
                             document.body.style.backgroundSize = 'cover';
                             document.body.style.backgroundPosition = 'center';
                             document.body.style.backgroundAttachment = 'fixed';
