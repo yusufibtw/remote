@@ -6,70 +6,117 @@
     <title>Dijital Kartvizit</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --bg: #0f0f11; --card: rgba(25, 25, 30, 0.5); --gold: #d4af37; --text: #fff; --muted: #a0a0a0; --google-blue: #4285F4; }
+        /* iOS Renk Paleti ve Değişkenler */
+        :root { 
+            --bg: #050507; 
+            --card-bg: rgba(30, 30, 35, 0.45); 
+            --gold: #d4af37; 
+            --text: #f5f5f7; 
+            --muted: #86868b; 
+        }
         
+        /* Apple Sistem Fontları ve Karanlık Arka Plan */
         body { 
-            margin: 0; font-family: 'Segoe UI', sans-serif; color: var(--text); display: flex; justify-content: center; min-height: 100vh;
-            background-color: var(--bg);
-            /* Cam efektinin belli olması için arkaya çok hafif ışık süzmeleri eklendi */
+            margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg); 
+            color: var(--text); 
+            display: flex; justify-content: center; min-height: 100vh; 
             background-image: 
-                radial-gradient(circle at 15% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 85% 100%, rgba(255, 255, 255, 0.04) 0%, transparent 50%);
+                radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 100%, rgba(255, 255, 255, 0.05) 0%, transparent 40%);
             background-attachment: fixed;
+            -webkit-font-smoothing: antialiased;
         }
         
-        .container { width: 100%; max-width: 480px; padding: 30px 20px; box-sizing: border-box; text-align: center; position: relative; z-index: 1; }
+        .container { width: 100%; max-width: 480px; padding: 40px 20px; box-sizing: border-box; text-align: center; position: relative; z-index: 1; }
         
-        h1 { font-size: 22px; margin: 15px 0 5px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        p.sub { color: var(--muted); font-size: 14px; margin-bottom: 25px; }
+        h1 { font-size: 24px; margin: 10px 0 5px; font-weight: 700; letter-spacing: 0.5px; text-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        p.sub { color: var(--muted); font-size: 15px; margin-bottom: 30px; font-weight: 500; }
         
-        /* GLASSMORPHISM - BUZLU CAM KARTI */
+        /* iOS WIDGET KARTI (Güçlü Cam Efekti) */
         .card { 
-            background: var(--card); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); /* Safari uyumluluğu */
-            padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: left; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4); 
-            border: 1px solid rgba(212, 175, 55, 0.15); /* İnce şık altın kenarlık */
+            background: var(--card-bg); 
+            backdrop-filter: blur(24px); 
+            -webkit-backdrop-filter: blur(24px); 
+            padding: 24px; 
+            border-radius: 24px; 
+            margin-bottom: 25px; 
+            text-align: left; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
         }
-        .card h2 { color: var(--gold); font-size: 14px; margin-top: 0; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;}
-        .label { font-size: 12px; color: var(--muted); margin-bottom: 5px; }
-        .val { font-size: 18px; font-weight: bold; margin-bottom: 15px; word-break: break-all; }
+        .card h2 { color: var(--gold); font-size: 13px; margin-top: 0; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;}
         
-        .btn-copy { background: var(--gold); color: black; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);}
+        /* Gömülü Bilgi Kutuları (Ayarlar Menüsü Tarzı) */
+        .label { font-size: 12px; color: var(--muted); margin-bottom: 6px; margin-left: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .val { 
+            background: rgba(0, 0, 0, 0.25); 
+            padding: 14px 16px; 
+            border-radius: 14px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            margin-bottom: 18px; 
+            word-break: break-all; 
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+        #iban-no { font-family: monospace; font-size: 17px; letter-spacing: 1px; color: var(--gold); }
         
-        .social-btn { display: flex; align-items: center; justify-content: center; text-decoration: none; padding: 16px; border-radius: 10px; margin-bottom: 12px; font-size: 16px; font-weight: bold; color: var(--text); box-sizing: border-box; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+        /* Ana Aksiyon Butonu */
+        .btn-copy { 
+            background: linear-gradient(135deg, #d4af37, #b5952f); 
+            color: #000; border: none; padding: 16px; width: 100%; 
+            border-radius: 16px; font-weight: 700; font-size: 16px; 
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; 
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); 
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.25);
+        }
+        .btn-copy:active { transform: scale(0.96); }
+        
+        /* YENİ NESİL RENKLİ CAM BUTONLAR (iOS Style) */
+        .social-btn { 
+            display: flex; align-items: center; justify-content: center; text-decoration: none; 
+            padding: 16px; border-radius: 16px; margin-bottom: 14px; font-size: 16px; font-weight: 600; 
+            box-sizing: border-box; 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .social-btn:active { transform: scale(0.96); }
         .social-btn i { font-size: 22px; margin-right: 12px; }
         
-        /* Web Butonu da Buzlu Cam Oldu */
-        .btn-web { 
-            background: rgba(30, 30, 30, 0.4); 
-            color: var(--gold); 
-            border: 1px solid rgba(212, 175, 55, 0.3); 
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
+        /* Özel Marka Cam Renkleri */
+        .btn-web { background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.25); color: #fff; }
+        .btn-web i { color: var(--gold); }
         
-        .btn-google { background-color: var(--google-blue); }
-        .btn-wp { background-color: #25D366; color: #000; }
-        .btn-ig { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
-        .btn-mail { background-color: #ea4335; color: #fff; } 
+        .btn-google { background: rgba(66, 133, 244, 0.1); border: 1px solid rgba(66, 133, 244, 0.25); color: #fff; }
+        .btn-google i { color: #4285F4; }
+        
+        .btn-wp { background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.25); color: #fff; }
+        .btn-wp i { color: #34d363; }
+        
+        .btn-ig { background: rgba(220, 39, 67, 0.1); border: 1px solid rgba(220, 39, 67, 0.25); color: #fff; }
+        .btn-ig i { background: -webkit-linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .btn-mail { background: rgba(234, 67, 53, 0.1); border: 1px solid rgba(234, 67, 53, 0.25); color: #fff; }
+        .btn-mail i { color: #ea4335; }
         
         .loader { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 50px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #content { display: none; }
 
-        .footer { margin-top: 25px; text-align: center; font-size: 13px; color: var(--muted); padding-bottom: 15px; line-height: 1.8; }
-        .footer a { color: var(--gold); text-decoration: none; font-weight: bold; letter-spacing: 0.5px; }
+        .footer { margin-top: 30px; text-align: center; font-size: 13px; color: var(--muted); padding-bottom: 15px; line-height: 1.8; }
+        .footer a { color: var(--gold); text-decoration: none; font-weight: 600; letter-spacing: 0.5px; }
         .footer-cta { display: block; font-size: 14px; margin-bottom: 5px; }
-        .footer-brand { font-size: 11px; opacity: 0.8; }
+        .footer-brand { font-size: 12px; opacity: 0.7; font-weight: 500; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div id="loading" class="loader"></div>
-        <div id="error-msg" style="display:none; color: #ff6b6b; margin-top:50px; font-weight:bold; padding: 20px; line-height: 1.5; background: rgba(0,0,0,0.8); border-radius: 10px;"></div>
+        <div id="error-msg" style="display:none; color: #ff6b6b; margin-top:50px; font-weight:bold; padding: 20px; line-height: 1.5; background: rgba(20,20,25,0.8); border-radius: 16px; border: 1px solid rgba(255,107,107,0.3);"></div>
 
         <div id="content">
             <h1 id="shop-name"></h1>
@@ -206,7 +253,7 @@
                 btn.style.color = '#fff';
                 setTimeout(() => {
                     btn.innerHTML = '<i class="fas fa-copy"></i> IBAN\'ı Kopyala';
-                    btn.style.background = 'var(--gold)'; 
+                    btn.style.background = 'linear-gradient(135deg, #d4af37, #b5952f)'; 
                     btn.style.color = '#000';
                 }, 2000);
             });
