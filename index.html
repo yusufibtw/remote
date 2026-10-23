@@ -35,16 +35,13 @@
 
         .store-section-title { font-family: 'Times New Roman', Times, serif; font-size: 22px; border-bottom: 1px solid rgba(0,0,0,0.2); padding-bottom: 10px; margin-bottom: 25px; text-align: left; }
 
-        /* Hafif 3 Boyutlu Gerçek Kart Görselleri */
         .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
         
         .real-card-img {
             width: 100%;
             height: auto;
             border-radius: 14px; 
-            box-shadow: 
-                6px 8px 16px rgba(0, 0, 0, 0.25), 
-                -2px -2px 6px rgba(255, 255, 255, 0.2);
+            box-shadow: 6px 8px 16px rgba(0, 0, 0, 0.25), -2px -2px 6px rgba(255, 255, 255, 0.2);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.1);
@@ -52,16 +49,14 @@
         
         .real-card-img:active, .real-card-img:hover { 
             transform: translateY(-6px) scale(1.02);
-            box-shadow: 
-                8px 12px 20px rgba(0, 0, 0, 0.35), 
-                -2px -2px 8px rgba(255, 255, 255, 0.3);
+            box-shadow: 8px 12px 20px rgba(0, 0, 0, 0.35), -2px -2px 8px rgba(255, 255, 255, 0.3);
         }
 
         .btn-order { background: #1a1a1a; color: #fff; text-decoration: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 16px; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); font-family: 'Segoe UI', sans-serif; transition: transform 0.2s;}
         .btn-order:active { transform: scale(0.96); }
 
         /* ==========================================
-           2. MÜŞTERİ NFC EKRANI (SENİN ORİJİNAL KODUN)
+           2. MÜŞTERİ NFC EKRANI 
            ========================================== */
         body.nfc-mode { 
             background-color: #050507; 
@@ -89,10 +84,7 @@
         .nfc-card::after {
             content: "";
             position: absolute;
-            top: 0;
-            left: -150%;
-            width: 50%;
-            height: 100%;
+            top: 0; left: -150%; width: 50%; height: 100%;
             background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.25), transparent);
             transform: skewX(-25deg);
             animation: shine 3.5s infinite ease-in-out; 
@@ -112,19 +104,9 @@
         
         .label { font-size: 11px; color: #86868b; margin-bottom: 4px; margin-left: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
         .val { 
-            background: rgba(0, 0, 0, 0.25); 
-            padding: 10px 14px; 
-            border-radius: 12px; 
-            font-size: 15px; 
-            font-weight: 600; 
-            margin-bottom: 12px; 
-            word-break: break-all; 
-            border: 1px solid rgba(255,255,255,0.03);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-            position: relative;
-            z-index: 2; 
+            background: rgba(0, 0, 0, 0.25); padding: 10px 14px; border-radius: 12px; font-size: 15px; font-weight: 600; margin-bottom: 12px; word-break: break-all; border: 1px solid rgba(255,255,255,0.03); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); position: relative; z-index: 2; 
         }
-        #iban-no { font-family: monospace; font-size: 15px; letter-spacing: 1px; color: #d4af37; }
+        .iban-text { font-family: monospace; font-size: 15px; letter-spacing: 1px; color: #d4af37; }
         
         .inline-copy-icon { color: #d4af37; font-size: 18px; cursor: pointer; padding: 5px; transition: all 0.2s; }
         .inline-copy-icon:active { transform: scale(0.8); }
@@ -156,33 +138,23 @@
 <body>
 
     <div class="container">
-        
         <div id="loading" class="loader"></div>
         <div id="error-msg" style="display:none; color: #ff6b6b; margin-top:50px; font-weight:bold; padding: 20px; line-height: 1.5; background: rgba(20,20,25,0.8); border-radius: 16px; border: 1px solid rgba(255,107,107,0.3);"></div>
 
-        <!-- ==========================================
-             1. VİTRİN EKRANI (SADECE yusufibtw.com YAZILIRSA)
-             ========================================== -->
         <div id="storefront">
             <div class="brand-logo">
                 <div class="brand-title">yusufibtw.</div>
                 <div class="brand-subtitle">YAZILIM</div>
-                <div class="brand-desc">
-                    Kafe&Restaurant<br>Menü Yazılım.<br>NFC Kart<br>Sistemleri
-                </div>
+                <div class="brand-desc">Kafe&Restaurant<br>Menü Yazılım.<br>NFC Kart<br>Sistemleri</div>
             </div>
 
             <div class="store-section-title">Kart Modellerimiz</div>
 
-            <!-- Kart Örnekleri (Görsel Dosyaları - .png veya .jpg olarak yüklenmeli) -->
             <div class="cards-grid">
-                <!-- Sırayla Kart Görselleri -->
                 <img src="iban.png" class="real-card-img" alt="İban Kartı">
                 <img src="wp.png" class="real-card-img" alt="WhatsApp Kartı">
                 <img src="google.png" class="real-card-img" alt="Google Kartı">
                 <img src="insta.png" class="real-card-img" alt="Instagram Kartı">
-                
-                <!-- Sahibinden Kartı (Ortalanmış ve Geniş) -->
                 <img src="sahibinden.png" class="real-card-img" style="grid-column: span 2; width: 70%; margin: 0 auto;" alt="Sahibinden Kartı">
             </div>
 
@@ -193,57 +165,51 @@
             <div style="font-size: 11px; color: #444; margin-top: 30px; font-weight: 500;">© 2026 yusufibtw YAZILIM</div>
         </div>
 
-        <!-- ==========================================
-             2. NFC MÜŞTERİ EKRANI (LİNKTE ID VARSA)
-             ========================================== -->
         <div id="content">
             <h1 class="nfc-title" id="shop-name"></h1>
             <p class="nfc-sub" id="shop-sub"></p>
 
-            <div class="nfc-card">
+            <!-- 1. IBAN KART KUTUSU -->
+            <div class="nfc-card" id="card-iban-1">
                 <h2>Hızlı Ödeme</h2>
-                
                 <div class="label">Hesap Sahibi</div>
                 <div class="val" style="display: flex; justify-content: space-between; align-items: center;">
                     <span id="owner-name"></span>
-                    <i class="fas fa-copy inline-copy-icon" id="copy-name-btn" onclick="copyName()" title="İsmi Kopyala"></i>
+                    <i class="fas fa-copy inline-copy-icon" id="copy-name-btn" onclick="copyName('owner-name', 'copy-name-btn')" title="İsmi Kopyala"></i>
                 </div>
-
                 <div class="label">IBAN Numarası</div>
-                <div class="val" id="iban-no"></div>
-                <button class="btn-copy" onclick="copyIban()" id="copy-btn"><i class="fas fa-copy"></i> IBAN'ı Kopyala</button>
+                <div class="val iban-text" id="iban-no"></div>
+                <button class="btn-copy" onclick="copyIban('iban-no', 'copy-btn')" id="copy-btn"><i class="fas fa-copy"></i> IBAN'ı Kopyala</button>
             </div>
 
-            <a id="link-web" href="#" target="_blank" class="social-btn btn-web" style="display:none;">
-                <i class="fas fa-globe"></i> Web Sitemizi Ziyaret Edin
-            </a>
-            <a id="link-g" href="#" target="_blank" class="social-btn btn-google" style="display:none;">
-                <i class="fab fa-google"></i> Google'da Bizi Puanlayın
-            </a>
-            <a id="link-i" href="#" target="_blank" class="social-btn btn-ig" style="display:none;">
-                <i class="fab fa-instagram"></i> Instagram'da Takip Edin
-            </a>
-            <a id="link-w" href="#" target="_blank" class="social-btn btn-wp" style="display:none;">
-                <i class="fab fa-whatsapp"></i> WhatsApp'tan Ulaşın
-            </a>
-            <a id="link-m" href="#" target="_blank" class="social-btn btn-mail" style="display:none;">
-                <i class="fas fa-envelope"></i> Bize Mail Atın
-            </a>
+            <!-- 2. IBAN KART KUTUSU (GİZLİ BAŞLAR) -->
+            <div class="nfc-card" id="card-iban-2" style="display: none;">
+                <h2>Hızlı Ödeme (2. Hesap)</h2>
+                <div class="label">Hesap Sahibi</div>
+                <div class="val" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span id="owner-name-2"></span>
+                    <i class="fas fa-copy inline-copy-icon" id="copy-name-btn-2" onclick="copyName('owner-name-2', 'copy-name-btn-2')" title="İsmi Kopyala"></i>
+                </div>
+                <div class="label">IBAN Numarası</div>
+                <div class="val iban-text" id="iban-no-2"></div>
+                <button class="btn-copy" onclick="copyIban('iban-no-2', 'copy-btn-2')" id="copy-btn-2"><i class="fas fa-copy"></i> 2. IBAN'ı Kopyala</button>
+            </div>
+
+            <a id="link-web" href="#" target="_blank" class="social-btn btn-web" style="display:none;"><i class="fas fa-globe"></i> Web Sitemizi Ziyaret Edin</a>
+            <a id="link-g" href="#" target="_blank" class="social-btn btn-google" style="display:none;"><i class="fab fa-google"></i> Google'da Bizi Puanlayın</a>
+            <a id="link-i" href="#" target="_blank" class="social-btn btn-ig" style="display:none;"><i class="fab fa-instagram"></i> Instagram'da Takip Edin</a>
+            <a id="link-w" href="#" target="_blank" class="social-btn btn-wp" style="display:none;"><i class="fab fa-whatsapp"></i> WhatsApp'tan Ulaşın</a>
+            <a id="link-m" href="#" target="_blank" class="social-btn btn-mail" style="display:none;"><i class="fas fa-envelope"></i> Bize Mail Atın</a>
 
             <div class="footer">
                 <a href="https://wa.me/905525714538?text=Merhaba,%20dijital%20kartvizit%20sistemiyle%20ilgileniyorum." target="_blank" class="footer-cta">Bu dijital kartvizitten yaptırmak için tıklayın</a>
-                <div class="footer-brand">
-                    Powered by <a href="https://wa.me/905525714538?text=Merhaba,%20dijital%20kartvizit%20sistemiyle%20ilgileniyorum." target="_blank">yusufibtw</a>
-                </div>
+                <div class="footer-brand">Powered by <a href="https://wa.me/905525714538?text=Merhaba,%20dijital%20kartvizit%20sistemiyle%20ilgileniyorum." target="_blank">yusufibtw</a></div>
             </div>
         </div>
-
     </div>
 
     <script>
-        // GÜVENLİK GÖREVLİSİ (APPS SCRIPT) API LİNKİNİZ
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxahnDydgQekewBhigtnkUKFH7qYBoEs4o7FeW2Gp6AGSfkF6AHtvlQJLHvNM7TMs5WAw/exec';
-        
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoTDMEQorEEpdPOKo_9QjRQfcZd66Bwziaq9vwWPsMwSIHq5VO6qZ60ozoDv_27-wlXw/exec';
         const urlParams = new URLSearchParams(window.location.search);
         const musteriID = urlParams.get('id');
 
@@ -262,10 +228,8 @@
 
         async function fetchVeri() {
             try {
-                // Sadece spesifik bir ID sorulur, tablo asla indirilmez.
                 const response = await fetch(`${SCRIPT_URL}?id=${musteriID}`);
                 if (!response.ok) throw new Error("Sunucu hatası");
-                
                 const data = await response.json();
                 
                 if (data.hata) {
@@ -273,12 +237,25 @@
                     return;
                 }
 
-                // Gelen güvenli verileri ekrana yazdır
                 document.getElementById('shop-name').innerText = data['Dukkan_Adi'] || '';
                 document.getElementById('shop-sub').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${data['Konum'] || ''}`;
                 
-                document.getElementById('owner-name').innerText = data['Hesap_Sahibi'] || '';
-                document.getElementById('iban-no').innerText = data['IBAN'] || '';
+                // 1. IBAN BİLGİLERİ
+                const iban1 = data['IBAN'] || '';
+                if(iban1) {
+                    document.getElementById('owner-name').innerText = data['Hesap_Sahibi'] || '';
+                    document.getElementById('iban-no').innerText = iban1;
+                } else {
+                    document.getElementById('card-iban-1').style.display = 'none'; // Hiç iban yoksa gizle
+                }
+
+                // 2. IBAN BİLGİLERİ (EĞER VARSA KUTUYU AÇ)
+                const iban2 = data['IBAN_2'] || '';
+                if(iban2 && iban2.trim() !== '') {
+                    document.getElementById('owner-name-2').innerText = data['Hesap_Sahibi_2'] || '';
+                    document.getElementById('iban-no-2').innerText = iban2;
+                    document.getElementById('card-iban-2').style.display = 'block';
+                }
 
                 const gl = data['Google_Link'] || '';
                 const ig = data['Insta_Link'] || '';
@@ -307,25 +284,25 @@
             errDiv.style.display = 'block';
         }
 
-        function copyIban() {
-            const text = document.getElementById('iban-no').innerText.replace(/\s+/g, '');
+        // Dinamik Kopyalama Fonksiyonları (Hangi butona basılırsa o kutuyu kopyalar)
+        function copyIban(textId, btnId) {
+            const text = document.getElementById(textId).innerText.replace(/\s+/g, '');
             navigator.clipboard.writeText(text).then(() => {
-                const btn = document.getElementById('copy-btn');
+                const btn = document.getElementById(btnId);
+                const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fas fa-check"></i> Kopyalandı!';
-                btn.style.background = '#4CAF50'; 
-                btn.style.color = '#fff';
+                btn.style.background = '#4CAF50'; btn.style.color = '#fff';
                 setTimeout(() => {
-                    btn.innerHTML = '<i class="fas fa-copy"></i> IBAN\'ı Kopyala';
-                    btn.style.background = 'linear-gradient(135deg, #d4af37, #b5952f)'; 
-                    btn.style.color = '#000';
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'linear-gradient(135deg, #d4af37, #b5952f)'; btn.style.color = '#000';
                 }, 2000);
             });
         }
 
-        function copyName() {
-            const text = document.getElementById('owner-name').innerText;
+        function copyName(textId, iconId) {
+            const text = document.getElementById(textId).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                const icon = document.getElementById('copy-name-btn');
+                const icon = document.getElementById(iconId);
                 icon.className = 'fas fa-check inline-copy-icon';
                 icon.style.color = '#4CAF50';
                 setTimeout(() => {
