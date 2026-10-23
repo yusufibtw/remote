@@ -171,7 +171,7 @@
 
             <!-- 1. IBAN KART KUTUSU -->
             <div class="nfc-card" id="card-iban-1">
-                <h2>Hızlı Ödeme</h2>
+                <h2 id="bank-name-1">Hızlı Ödeme</h2>
                 <div class="label">Hesap Sahibi</div>
                 <div class="val" style="display: flex; justify-content: space-between; align-items: center;">
                     <span id="owner-name"></span>
@@ -184,7 +184,7 @@
 
             <!-- 2. IBAN KART KUTUSU (GİZLİ BAŞLAR) -->
             <div class="nfc-card" id="card-iban-2" style="display: none;">
-                <h2>Hızlı Ödeme (2. Hesap)</h2>
+                <h2 id="bank-name-2">Hızlı Ödeme (2. Hesap)</h2>
                 <div class="label">Hesap Sahibi</div>
                 <div class="val" style="display: flex; justify-content: space-between; align-items: center;">
                     <span id="owner-name-2"></span>
@@ -209,6 +209,7 @@
     </div>
 
     <script>
+        // İŞTE SENİN YENİ API LİNKİN BURAYA EKLENDİ
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxahnDydgQekewBhigtnkUKFH7qYBoEs4o7FeW2Gp6AGSfkF6AHtvlQJLHvNM7TMs5WAw/exec';
         const urlParams = new URLSearchParams(window.location.search);
         const musteriID = urlParams.get('id');
@@ -240,21 +241,33 @@
                 document.getElementById('shop-name').innerText = data['Dukkan_Adi'] || '';
                 document.getElementById('shop-sub').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${data['Konum'] || ''}`;
                 
-                // 1. IBAN BİLGİLERİ
+                // 1. IBAN BİLGİLERİ VE BANKA ADI
                 const iban1 = data['IBAN'] || '';
                 if(iban1) {
                     document.getElementById('owner-name').innerText = data['Hesap_Sahibi'] || '';
                     document.getElementById('iban-no').innerText = iban1;
+                    
+                    // Banka adı doluysa yazdır, boşsa "HIZLI ÖDEME" kalsın
+                    const banka1 = data['Banka_1'] || '';
+                    if(banka1.trim() !== '') {
+                        document.getElementById('bank-name-1').innerText = banka1;
+                    }
                 } else {
                     document.getElementById('card-iban-1').style.display = 'none'; // Hiç iban yoksa gizle
                 }
 
-                // 2. IBAN BİLGİLERİ (EĞER VARSA KUTUYU AÇ)
+                // 2. IBAN BİLGİLERİ VE BANKA ADI
                 const iban2 = data['IBAN_2'] || '';
                 if(iban2 && iban2.trim() !== '') {
                     document.getElementById('owner-name-2').innerText = data['Hesap_Sahibi_2'] || '';
                     document.getElementById('iban-no-2').innerText = iban2;
                     document.getElementById('card-iban-2').style.display = 'block';
+                    
+                    // 2. Banka adı doluysa yazdır, boşsa "HIZLI ÖDEME (2. HESAP)" kalsın
+                    const banka2 = data['Banka_2'] || '';
+                    if(banka2.trim() !== '') {
+                        document.getElementById('bank-name-2').innerText = banka2;
+                    }
                 }
 
                 const gl = data['Google_Link'] || '';
@@ -284,7 +297,6 @@
             errDiv.style.display = 'block';
         }
 
-        // Dinamik Kopyalama Fonksiyonları (Hangi butona basılırsa o kutuyu kopyalar)
         function copyIban(textId, btnId) {
             const text = document.getElementById(textId).innerText.replace(/\s+/g, '');
             navigator.clipboard.writeText(text).then(() => {
