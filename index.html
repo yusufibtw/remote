@@ -198,7 +198,17 @@
             <a id="link-web" href="#" target="_blank" class="social-btn btn-web" style="display:none;"><i class="fas fa-globe"></i> Web Sitemizi Ziyaret Edin</a>
             <a id="link-g" href="#" target="_blank" class="social-btn btn-google" style="display:none;"><i class="fab fa-google"></i> Google'da Bizi Puanlayın</a>
             <a id="link-i" href="#" target="_blank" class="social-btn btn-ig" style="display:none;"><i class="fab fa-instagram"></i> Instagram'da Takip Edin</a>
-            <a id="link-w" href="#" target="_blank" class="social-btn btn-wp" style="display:none;"><i class="fab fa-whatsapp"></i> WhatsApp'tan Ulaşın</a>
+            
+            <!-- 1. WHATSAPP BUTONU -->
+            <a id="link-w" href="#" target="_blank" class="social-btn btn-wp" style="display:none;">
+                <i class="fab fa-whatsapp"></i> <span id="wp-text-1">WhatsApp'tan Ulaşın</span>
+            </a>
+            
+            <!-- 2. WHATSAPP BUTONU (YENİ EKLENDİ) -->
+            <a id="link-w-2" href="#" target="_blank" class="social-btn btn-wp" style="display:none;">
+                <i class="fab fa-whatsapp"></i> <span id="wp-text-2">2. WhatsApp Hattı</span>
+            </a>
+
             <a id="link-m" href="#" target="_blank" class="social-btn btn-mail" style="display:none;"><i class="fas fa-envelope"></i> Bize Mail Atın</a>
 
             <div class="footer">
@@ -272,14 +282,30 @@
 
                 const gl = data['Google_Link'] || '';
                 const ig = data['Insta_Link'] || '';
-                const wp = data['WP_No'] || '';
                 const mail = data['Mail_Adresi'] || '';
                 const web = data['Web_Sitesi'] || '';
+
+                // 1. WHATSAPP (DİNAMİK İSİMLİ)
+                const wp1 = data['WP_No'] || '';
+                const wp1Name = data['WP_Isim'] || 'WhatsApp\'tan Ulaşın';
+                if(wp1) { 
+                    document.getElementById('link-w').href = `https://wa.me/${wp1}`; 
+                    document.getElementById('wp-text-1').innerText = wp1Name;
+                    document.getElementById('link-w').style.display = 'flex'; 
+                }
+
+                // 2. WHATSAPP (DİNAMİK İSİMLİ)
+                const wp2 = data['WP_No_2'] || '';
+                const wp2Name = data['WP_Isim_2'] || '2. WhatsApp Hattı';
+                if(wp2) { 
+                    document.getElementById('link-w-2').href = `https://wa.me/${wp2}`; 
+                    document.getElementById('wp-text-2').innerText = wp2Name;
+                    document.getElementById('link-w-2').style.display = 'flex'; 
+                }
 
                 if(web) { document.getElementById('link-web').href = web; document.getElementById('link-web').style.display = 'flex'; }
                 if(gl) { document.getElementById('link-g').href = gl; document.getElementById('link-g').style.display = 'flex'; }
                 if(ig) { document.getElementById('link-i').href = `https://instagram.com/${ig}`; document.getElementById('link-i').style.display = 'flex'; }
-                if(wp) { document.getElementById('link-w').href = `https://wa.me/${wp}`; document.getElementById('link-w').style.display = 'flex'; }
                 if(mail) { document.getElementById('link-m').href = `mailto:${mail}`; document.getElementById('link-m').style.display = 'flex'; }
                 
                 document.getElementById('loading').style.display = 'none';
